@@ -7,8 +7,9 @@ body {
   height:100%;
   background-color:#f4ecd8;
 }
+
 .fullsize {
-  height:calc(100vh - 2rem);
+  height:calc(100vh - 3rem);
   max-width:100vw;
   display:inherit;
   margin-left:auto;
@@ -16,6 +17,7 @@ body {
 }
 .compare {
   width: calc( 50% - 20px);
+  max-height: calc(100vh - 3rem);
   margin-left:auto;
   margin-right: auto;
   display:inline-block;
@@ -91,4 +93,12 @@ body {
   display: inline-block;
   margin: 0.1em 0.3em 0.1em 0.3em;
   float: left;
+}
+
+.folder {
+  background-repeat:no-repeat;
+  background-size: contain;
+}
+.hidden {
+  display: none;
 }

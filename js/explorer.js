@@ -1,38 +1,41 @@
-function openDir (dir, callback) {
-  document.currentDir = dir;
-  const fs = require('fs');
-  if (document.currentDirEntries) {
-    setCurrentElement(callback);
-  } else {
-    fs.readdir(dir, (err, res) => {
-      document.currentDirEntries = res;
-      ipc.send('clean-dir-entries', dir, res);
-      setCurrentElement(callback);
-    });
-  }
-}
-
 const IGNORE_EXT = ["7z", "php", "rar", "exe", "bat", "js", "htm", "html", "zip"];
 
-function setCurrentElement(callback) {
+function openDir (dir, callback) {
   "use strict";
-  const fs = require('fs');
+  var body = document.getElementsByTagName('body')[0];
+  if(!document.forceElement) {
+    if(document.mainElement && document.mainElement.getHtmlElement())
+      body.removeChild(document.mainElement.getHtmlElement());
+    document.mainElement = new Element("./loader.gif");
+    document.mainElement.getHtmlElement().classList.add('fullsize');
+    body.appendChild(document.mainElement.getHtmlElement());
+  }
+  document.currentDirEntries = null;
+  document.currentDir = dir;
+  fs.readdir(dir, (err, res) => {
+    document.currentDirEntries = res;
+    ipc.send('clean-dir-entries', dir, res);
+  });
+}
+
+function setCurrentElement() {
+  "use strict";
   var files = document.currentDirEntries;
-  if(!files) return;
+  if(!files || files.length ===0) {
+    document.folderManager.render();
+    return;
+  }
+  const fs = require('fs');
   var page = getCurrentPage();
   var elem = null;
+  var file_name;
   var entry;
   var ext;
   var cIndex = 0;
-  if(callback) {
-    callback();
-    return;
-  }
   var i = 0;
   var arrayIndex;
   function testFile(err, file) {
     if(file.isFile()) {
-      var file_name = files[i];
       ext = file_name.split('.');
       ext = ext[ext.length-1];
       if (file[0]!=='.' && file[0]!=='$' && !IGNORE_EXT.includes(ext)) {
@@ -103,6 +106,7 @@ function getCurrentPage() {
 }
 
 function setCurrentPage(page) {
+  "use strict";
   if(typeof page ==="undefined") {
     page = getCurrentPage();
   }
@@ -129,24 +133,30 @@ function refreshElement() {
   getCurrentPage();
 }
 
+function showFolders() {
 
-(()=>{
+}
+
+(() => {
+  "use strict";
   var match = document.URL.match(/\#\{page:([0-9]+),url:(.*),dir:(.*)\}/);
-  var argv= require('electron').remote.process.argv;
+  var argv = require('electron').remote.process.argv;
 
   if(match) {
-    setCurrentPage(parseInt(match[1]));
-    openDir(match[3], ()=> {
-      elem = new Element(match[2]);
-      document.mainElement = elem;
-      elem = elem.getHtmlElement();
-      elem.classList.add('fullsize');
-      document.getElementsByTagName('body')[0].appendChild(elem);
-      applyRatio();
-      if(!setLeftMenueSize()) {
-        toFooterMenue();
-      }
-    });
+    var elem = new Element(match[2]);
+    document.mainElement = elem;
+    elem = elem.getHtmlElement();
+    elem.classList.add('fullsize');
+    document.getElementsByTagName('body')[0].appendChild(elem);
+    applyRatio();
+    if(!setLeftMenueSize()) {
+      toFooterMenue();
+    }
+    document.forceElement = true;
+    var pi = document.getElementById('page_index');
+    pi.setAttribute('data-page', match[1]);
+    pi.innerHTML = "Page : "+(parseInt(match[1])+1);
+    openDir(match[3]);
   } else if(argv.length==2) {
     openDir(argv[1]);
   } else {

@@ -1,7 +1,7 @@
 const fs = require('fs');
 document.volume = 1;
 
-var Element = (()=> {
+const Element = (()=> {
   function Element(path) {
     this.path = path;
     this.htmlPath = decodeURI(path);
@@ -9,6 +9,11 @@ var Element = (()=> {
     var tmp = path.split('.');
     this.ext = tmp[tmp.length-1].toLowerCase();
   }
+
+  Element.getImageExtention = function () {
+    const IMAGE_EXTENTION = [ 'gif', 'jpg', 'png', 'tiff', 'jpeg', 'ico'];
+    return IMAGE_EXTENTION;
+  };
 
   Element.getVideoExtention = function () {
     const VIDEO_EXTENTION = [ 'webm', 'mp4', 'mkv', 'ogv', 'mpg', 'mpeg', 'avi', 'wmv', 'mov', 'rm', 'ram', 'flv', '3gp'];
@@ -25,15 +30,19 @@ var Element = (()=> {
   };
 
   Element.prototype.getType = function() {
-    if(Element.getAudioExtention().includes(this.ext)) {
-      return "audio";
+    if(this.type) return this.type;
+    if(Element.getImageExtention().includes(this.ext)) {
+      this.type = "img";
+    } else if(Element.getAudioExtention().includes(this.ext)) {
+      this.type = "audio";
     } else if (Element.getVideoExtention().includes(this.ext)) {
-      return "video";
+      this.type = "video";
     } else if (Element.getTextExtention().includes(this.ext)) {
-      return "textarea";
+      this.type = "textarea";
     } else {
-      return "img";
+      this.type = "iframe";
     }
+    return this.type;
   };
   Element.prototype.getHtmlElement = function () {
     if(this.htmlElement===null) {
@@ -54,7 +63,8 @@ var Element = (()=> {
             htmlElement.volume = document.volume;
           }
           break;
-        case "img":
+        case "iframe":
+          htmlElement.style.width = "calc(100% - 5rem)!important";
           htmlElement.src = this.path;
           break;
         default:

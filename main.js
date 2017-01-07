@@ -24,7 +24,7 @@ function createWindow () {
   }));
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -56,6 +56,7 @@ ipc.on('clean-dir-entries', function (event, currentDir, files) {
   const IGNORE_EXT = ["7z", "php", "rar", "exe", "bat", "js", "htm", "html", "zip"];
   var cleaned = [];
   var i = 0;
+  var folders = [];
   function testFile(err, file) {
     if(file.isFile()) {
       var file_name = files[i];
@@ -64,15 +65,21 @@ ipc.on('clean-dir-entries', function (event, currentDir, files) {
       if (file[0]!=='.' && file[0]!=='$' && !IGNORE_EXT.includes(ext)) {
         cleaned.push(file_name);
       }
+    } else if(file.isDirectory()) {
+      folders.push(files[i]);
     }
     i++;
     if(i<files.length) {
       fs.stat(currentDir+'/'+files[i], testFile);
     } else {
-      event.sender.send('entry-cleaned', cleaned);
+      event.sender.send('entry-cleaned', cleaned, folders);
     }
   }
-  fs.stat(currentDir+'/'+files[0], testFile);
+  if(files.length>0) {
+    fs.stat(currentDir+'/'+files[0], testFile);
+  } else {
+    event.sender.send('entry-cleaned', cleaned, folders);
+  }
 });
 
 // This method will be called when Electron has finished

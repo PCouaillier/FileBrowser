@@ -1,4 +1,5 @@
 const URL_GET_TOGGLE_MENUE = "toggle_menue";
+
 document.isLeftMenueToggled = false;
 document.isFootMenue = true;
 var actionList = document.getElementById('actionList');
