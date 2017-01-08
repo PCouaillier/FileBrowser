@@ -19,6 +19,7 @@ const Folder = (() => {
     e.setAttribute('data-path', this.path);
     e.style.backgroundImage = "url("+this.image+")";
     e.addEventListener('click', function(event) {
+      hideFolderManager();
       openDir(this.getAttribute('data-path'));
     });
     return e;

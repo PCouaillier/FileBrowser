@@ -2,6 +2,9 @@ const IGNORE_EXT = ["7z", "php", "rar", "exe", "bat", "js", "htm", "html", "zip"
 
 function openDir (dir, callback) {
   "use strict";
+  dir = dir.replace(':/',':\\/').replace(/\\/g,'/').replace('://',':\\/');
+  document.getElementById('current_path').innerHTML = dir;
+  document.getElementById('show_folders').disabled=true;
   var body = document.getElementsByTagName('body')[0];
   if(!document.forceElement) {
     if(document.mainElement && document.mainElement.getHtmlElement())
@@ -61,7 +64,7 @@ function setCurrentElement() {
           match = "";
         }
         applyRatio();
-        if(!setLeftMenueSize()) {
+        if(document.isLeftMenueToggled && !setLeftMenueSize()) {
           toFooterMenue();
         }
         history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(match, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+"}");
@@ -91,7 +94,7 @@ function setCurrentElement() {
           match = "";
         }
         applyRatio();
-        if(!setLeftMenueSize()) {
+        if(document.isLeftMenueToggled && !setLeftMenueSize()) {
           toFooterMenue();
         }
         history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(match, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+"}");
@@ -150,7 +153,7 @@ function showFolders() {
       elem.classList.add('fullsize');
       document.getElementsByTagName('body')[0].appendChild(elem);
       applyRatio();
-      if(!setLeftMenueSize()) {
+      if(document.isLeftMenueToggled && !setLeftMenueSize()) {
         toFooterMenue();
       }
       document.forceElement = true;

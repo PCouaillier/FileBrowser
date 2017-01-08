@@ -11,7 +11,7 @@ const Element = (()=> {
   }
 
   Element.getImageExtention = function () {
-    const IMAGE_EXTENTION = [ 'gif', 'jpg', 'png', 'tiff', 'jpeg', 'ico'];
+    const IMAGE_EXTENTION = [ 'gif', 'jpg', 'png', 'jpeg', 'ico', 'svg', 'bmp'];
     return IMAGE_EXTENTION;
   };
 
@@ -25,7 +25,7 @@ const Element = (()=> {
   };
 
   Element.getTextExtention = function () {
-    const AUDIO_EXTENTION = ['md', 'text', 'json'];
+    const AUDIO_EXTENTION = ['md', 'text', 'json', 'git', 'txt', 'rb', 'py'];
     return AUDIO_EXTENTION;
   };
 
@@ -38,9 +38,9 @@ const Element = (()=> {
     } else if (Element.getVideoExtention().includes(this.ext)) {
       this.type = "video";
     } else if (Element.getTextExtention().includes(this.ext)) {
-      this.type = "textarea";
-    } else {
       this.type = "iframe";
+    } else {
+      this.type = "div";
     }
     return this.type;
   };
@@ -50,6 +50,9 @@ const Element = (()=> {
       var htmlElement = document.createElement(type);
       htmlElement.id="main-element";
       switch (type) {
+        case "img":
+          htmlElement.src = this.path;
+          break;
         case "video":
           var source = document.createElement('source');
           source.src=this.path;
@@ -68,8 +71,11 @@ const Element = (()=> {
           htmlElement.autoplay = true;
           htmlElement.src = this.path;
           break;
-        default:
+        case "iframe":
           htmlElement.src = this.path;
+          break;
+        default:
+          htmlElement.innerHTML = this.path;
           break;
       }
       this.htmlElement = htmlElement;
@@ -103,7 +109,7 @@ function applyRatio() {
     }
     if(window.innerWidth - htmlElement.offsetWidth < 250) {
       toFooterMenue();
-    } else if( document.isLeftMenueToggled && document.isFootMenue) {
+    } else if((window.innerWidth - htmlElement.offsetWidth) >= 500 && document.isLeftMenueToggled && document.isFootMenue) {
       toLeftMenue();
     }
   } else {

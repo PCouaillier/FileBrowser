@@ -65,14 +65,14 @@ ipc.on('clean-dir-entries', function (event, currentDir, files) {
   var i = 0;
   var folders = [];
   function testFile(err, file) {
-    if(file.isFile()) {
+    if(file && file.isFile()) {
       var file_name = files[i];
       ext = file_name.split('.');
       ext = ext[ext.length-1];
       if (file[0]!=='.' && file[0]!=='$' && !IGNORE_EXT.includes(ext)) {
         cleaned.push(file_name);
       }
-    } else if(file.isDirectory()) {
+    } else if (file && file.isDirectory()) {
       folders.push(files[i]);
     }
     i++;

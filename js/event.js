@@ -7,42 +7,42 @@
     var mainElementHtml;
     if(mainElement)
        mainElementHtml = document.mainElement.getHtmlElement();
+
     if(e.code === "Space" && mainElementHtml && (mainElement.getType() ==="video" || mainElement.getType() ==="audio") && mainElementHtml.readyState) {
       if(!mainElementHtml.paused)
         mainElementHtml.pause();
       else
         mainElementHtml.play();
-    } else if(e.key === "ArrowRight") {
-      nextPage();
-		} else if (e.key === "ArrowLeft" && index!==0) {
-      prevPage();
-    } else if(e.key === "Delete") {
-			deleteElement();
-		} else if(e.key === "Backspace") {
-			window.location = document.getElementById('undo').href;
-			e.preventDefault();
-			e.stopPropagation();
-		} else if (mainElement && (mainElement.getType() ==="video" || mainElement.getType() ==="audio")) {
-      if (e.key === "ArrowDown") {
-        volume = document.volume;
-        volume-=0.2;
-        if(volume>0) {
-          document.volume = volume;
-        } else {
-          volume = 0;
-          mute();
-        }
-        document.mainElement.getHtmlElement().volume = volume;
-      } else if (e.key === "ArrowUp") {
-        if(document.isMuted) {
-          mute();
-        }
-        volume = document.volume;
-        volume+=0.2;
-        volume = (volume>1)? 1 : volume;
+		} else if (e.key === "ArrowDown" && mainElement && (mainElement.getType() ==="video" || mainElement.getType() ==="audio")) {
+      volume = document.volume;
+      volume-=0.2;
+      if(volume>0) {
         document.volume = volume;
-        document.mainElement.getHtmlElement().volume = volume;
+      } else {
+        volume = 0;
+        mute();
       }
+      document.mainElement.getHtmlElement().volume = volume;
+    } else if (e.key === "ArrowUp" && mainElement && (mainElement.getType() ==="video" || mainElement.getType() ==="audio")) {
+      if(document.isMuted) {
+        mute();
+      }
+      volume = document.volume;
+      volume+=0.2;
+      volume = (volume>1)? 1 : volume;
+      document.volume = volume;
+      document.mainElement.getHtmlElement().volume = volume;
+    } else if(e.key === "Delete") {
+      deleteElement();
+    } else if(e.key === "Backspace") {
+      window.location = document.getElementById('undo').href;
+      e.preventDefault();
+      e.stopPropagation();
+    } else if (document.lockedPaged) {
+    } else if (e.key === "ArrowRight") {
+      nextPage();
+    } else if (e.key === "ArrowLeft" && index!==0) {
+      prevPage();
     }
 	});
   window.addEventListener('resize', () => {
@@ -63,18 +63,37 @@ ipc.on('selected-directory', function (event, path) {
 });
 
 ipc.on('entry-cleaned', function (event, cleaned, folders) {
+  document.lockedPaged = false;
+  if(folders.length===0) {
+    document.getElementById('show_folders').disabled=true;
+  } else {
+    document.getElementById('show_folders').disabled=false;
+    if(document.folderManager.hidden===false) {
+
+    }
+  }
   document.currentDirEntries = cleaned;
   document.currentDirEntriesCleaned = true;
   document.folderManager.setFolders(folders);
   document.folderManager.hidden = true;
+
   if(document.forceElement) return delete document.forceElement;
+
   setCurrentPage(0);
+
   if(cleaned.length>0) {
     setCurrentElement();
-    hideFolderManager();
   } else {
-    showFolderManager();
+    document.lockedPaged = true;
+    var parent = document.mainElement.getHtmlElement().parentNode;
+    parent.removeChild(document.mainElement.getHtmlElement());
+    document.mainElement = new Element("");
+    parent.appendChild(document.mainElement.getHtmlElement());
   }
+  if(document.folderManager.hidden && folders.length>0)
+    showFolderManager();
+  else
+    hideFolderManager();
 });
 
 function hideFolderManager () {
@@ -88,6 +107,7 @@ function hideFolderManager () {
 }
 
 function showFolderManager() {
+  toFooterMenue();
   var me = document.mainElement;
   document.folderManager.htmlElement.classList.remove('hidden');
   if(me.getType() ==="audio" || me.getType() ==="video")
@@ -95,25 +115,26 @@ function showFolderManager() {
   me.getHtmlElement().classList.add('hidden');
   document.folderManager.render();
   document.folderManager.hidden = false;
+  document.folderManager.htmlElement.focus();
 }
 
-document.getElementById('select_directory').addEventListener('click', function () {
+document.getElementById('select_directory').addEventListener('click', function() {
   ipc.send('open-file-dialog');
 });
-document.getElementById('show_folders').addEventListener('click', function () {
-  if(document.folderManager.hidden) {
+
+document.getElementById('show_folders').addEventListener('click', function() {
+  if(document.folderManager.hidden && document.folderManager.folders.length>0)
     showFolderManager();
-  } else {
+  else if (document.currentDirEntries.length>0)
     hideFolderManager();
-  }
 });
 
 document.getElementById('select_parent_directory').addEventListener('click', function() {
-  var spl = document.currentDir.replace('//', '/').split('/');
-  var res ="";
-  for(var i=0;i<spl.length-2;i++)
-    res+= spl[i]+"/";
-  res+= spl[i];
-  if(res!=="")
+  var spl = document.currentDir.replace(':/',':\\/').replace(/\\/g,'/').replace('://',':\\/').split('/');
+  var res = "";
+  for (var i=0;i<spl.length-2;i++)
+    res += spl[i] + "/";
+  res += spl[i];
+  if (res !== "")
     openDir(res);
 });
