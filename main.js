@@ -12,22 +12,25 @@ const url = require('url');
 let mainWindow;
 let windows = [];
 
-function createWindow () {
+function createWindow (e,k , targetPath) {
+  "use strict";
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
-  windows.push(mainWindow);
+  var window = new BrowserWindow({width: 800, height: 600});
+  windows.push(window);
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
+
+  window.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
+    hash: (targetPath)? "{page:0,url:null,dir:Z:}" : null
   }));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  window.webContents.openDevTools();
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  window.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -36,12 +39,16 @@ function createWindow () {
          windows.splice(i, 1);
       }
     }
-    mainWindow = null;
+    window = null;
   });
 }
 
 const ipc = require('electron').ipcMain;
 const dialog = require('electron').dialog;
+
+ipc.on('create-window' , function (event, targetPath) {
+  createWindow(null, null, targetPath);
+});
 
 ipc.on('open-file-dialog', function (event) {
   dialog.showOpenDialog({

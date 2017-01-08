@@ -63,8 +63,9 @@ const Element = (()=> {
             htmlElement.volume = document.volume;
           }
           break;
-        case "iframe":
-          htmlElement.style.width = "calc(100% - 5rem)!important";
+        case "audio":
+          htmlElement.controls = true;
+          htmlElement.autoplay = true;
           htmlElement.src = this.path;
           break;
         default:

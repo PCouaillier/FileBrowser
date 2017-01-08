@@ -143,16 +143,18 @@ function showFolders() {
   var argv = require('electron').remote.process.argv;
 
   if(match) {
-    var elem = new Element(match[2]);
-    document.mainElement = elem;
-    elem = elem.getHtmlElement();
-    elem.classList.add('fullsize');
-    document.getElementsByTagName('body')[0].appendChild(elem);
-    applyRatio();
-    if(!setLeftMenueSize()) {
-      toFooterMenue();
+    if(match[2]!=="null") {
+      var elem = new Element(match[2]);
+      document.mainElement = elem;
+      elem = elem.getHtmlElement();
+      elem.classList.add('fullsize');
+      document.getElementsByTagName('body')[0].appendChild(elem);
+      applyRatio();
+      if(!setLeftMenueSize()) {
+        toFooterMenue();
+      }
+      document.forceElement = true;
     }
-    document.forceElement = true;
     var pi = document.getElementById('page_index');
     pi.setAttribute('data-page', match[1]);
     pi.innerHTML = "Page : "+(parseInt(match[1])+1);

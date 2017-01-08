@@ -1,4 +1,4 @@
-const DEFAULT_FOLDER_IMAGE = "";
+const DEFAULT_FOLDER_IMAGE = "./folder.jpg";
 
 const Folder = (() => {
   var Folder = function Folder(path, name, image) {
@@ -19,8 +19,6 @@ const Folder = (() => {
     e.setAttribute('data-path', this.path);
     e.style.backgroundImage = "url("+this.image+")";
     e.addEventListener('click', function(event) {
-      console.log(this);
-      console.log(event);
       openDir(this.getAttribute('data-path'));
     });
     return e;

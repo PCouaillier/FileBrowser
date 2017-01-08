@@ -107,3 +107,13 @@ document.getElementById('show_folders').addEventListener('click', function () {
     hideFolderManager();
   }
 });
+
+document.getElementById('select_parent_directory').addEventListener('click', function() {
+  var spl = document.currentDir.replace('//', '/').split('/');
+  var res ="";
+  for(var i=0;i<spl.length-2;i++)
+    res+= spl[i]+"/";
+  res+= spl[i];
+  if(res!=="")
+    openDir(res);
+});
