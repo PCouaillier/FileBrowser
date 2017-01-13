@@ -1,4 +1,4 @@
-const DEFAULT_FOLDER_IMAGE = "./folder.jpg";
+const DEFAULT_FOLDER_IMAGE = "./folder.png";
 
 const Folder = (() => {
   var Folder = function Folder(path, name, image) {

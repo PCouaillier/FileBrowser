@@ -2,7 +2,8 @@ const fs = require('fs');
 document.volume = 1;
 
 const Element = (()=> {
-  function Element(path) {
+  function Element(path, name) {
+    this.name = name;
     this.path = path;
     this.htmlPath = decodeURI(path);
     this.htmlElement = null;
@@ -25,7 +26,7 @@ const Element = (()=> {
   };
 
   Element.getTextExtention = function () {
-    const AUDIO_EXTENTION = ['md', 'text', 'json', 'git', 'txt', 'rb', 'py'];
+    const AUDIO_EXTENTION = ['md', 'text', 'json', 'git', 'txt', 'rb', 'py', 'gitignore', 'css', 'coffee'];
     return AUDIO_EXTENTION;
   };
 
@@ -38,7 +39,7 @@ const Element = (()=> {
     } else if (Element.getVideoExtention().includes(this.ext)) {
       this.type = "video";
     } else if (Element.getTextExtention().includes(this.ext)) {
-      this.type = "iframe";
+      this.type = "pre";
     } else {
       this.type = "div";
     }
@@ -73,6 +74,9 @@ const Element = (()=> {
           break;
         case "iframe":
           htmlElement.src = this.path;
+          break;
+        case "pre":
+          fs.readFile('./style.css', 'utf8', (err, file)=>(htmlElement.innerHTML=file));
           break;
         default:
           htmlElement.innerHTML = this.path;

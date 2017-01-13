@@ -23,6 +23,12 @@ div#main-element.fullsize {
   padding-top: calc(100vh / 2);
   text-align: center;
 }
+pre.fullsize {
+  width: 80vw;
+  font-size: 16px;
+  overflow: auto;
+  line-height: 1.3;
+}
 
 .compare {
   width: calc( 50% - 20px);
@@ -38,6 +44,17 @@ div#main-element.fullsize {
   width: 100%;
   font-size:1.5rem;
   vertical-align: middle;
+}
+
+#actionList {
+  display: inline-block;
+  overflow: hidden;
+}
+
+#actionList > li {
+  color: blue;
+  text-decoration: underline;
+  display: inline-block;
 }
 
 #actionList button {
@@ -76,15 +93,10 @@ div#main-element.fullsize {
   transition: 0s
 }
 
-#actionList {
-  display: inline-block;
-  overflow: hidden;
+#actionList button.move_target {
+
 }
-#actionList > li {
-  color: blue;
-  text-decoration: underline;
-  display: inline-block;
-}
+
 #current_path {
   float: right;
   height: 100%;

@@ -48,7 +48,7 @@ function setCurrentElement() {
     i++;
     if(i<files.length) {
       if (cIndex === page+1) {
-        elem = new Element(document.currentDir+'/'+entry);
+        elem = new Element(document.currentDir+'/'+entry, entry);
         if(elem===null) return setCurrentPage(0);
         if(document.mainElement)
         document.getElementsByTagName('body')[0].removeChild(document.mainElement.getHtmlElement());
@@ -67,7 +67,7 @@ function setCurrentElement() {
         if(document.isLeftMenueToggled && !setLeftMenueSize()) {
           toFooterMenue();
         }
-        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(match, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+"}");
+        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(match, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+",name:"+me.name+"}");
       } else {
         fs.stat(document.currentDir+'/'+files[i], testFile);
       }
@@ -79,7 +79,7 @@ function setCurrentElement() {
     for (i = 0; i < document.currentDirEntries.length; i++) {
       if(i===page) {
         entry = document.currentDirEntries[i];
-        elem = new Element(document.currentDir+'/'+entry);
+        elem = new Element(document.currentDir+'/'+entry, entry);
         if(document.mainElement)
         document.getElementsByTagName('body')[0].removeChild(document.mainElement.getHtmlElement());
         document.mainElement = elem;
@@ -97,7 +97,7 @@ function setCurrentElement() {
         if(document.isLeftMenueToggled && !setLeftMenueSize()) {
           toFooterMenue();
         }
-        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(match, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+"}");
+        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(match, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+",name:"+me.name+"}");
       }
     }
   }
@@ -142,12 +142,12 @@ function showFolders() {
 
 (() => {
   "use strict";
-  var match = document.URL.match(/\#\{page:([0-9]+),url:(.*),dir:(.*)\}/);
+  var match = document.URL.match(/\#\{page:([0-9]+),url:(.*),dir:(.*),name:(.*)\}/);
   var argv = require('electron').remote.process.argv;
 
   if(match) {
     if(match[2]!=="null") {
-      var elem = new Element(match[2]);
+      var elem = new Element(match[2], match[4]);
       document.mainElement = elem;
       elem = elem.getHtmlElement();
       elem.classList.add('fullsize');
@@ -163,7 +163,7 @@ function showFolders() {
     pi.innerHTML = "Page : "+(parseInt(match[1])+1);
     openDir(match[3]);
   } else if(argv.length==2) {
-    openDir(argv[1]);
+    openDir(fs.realpathSync(argv[1]));
   } else {
     setCurrentPage();
   }
