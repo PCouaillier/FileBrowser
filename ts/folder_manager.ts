@@ -1,20 +1,21 @@
-const FolderManager = (()=> {
-  "use strict";
-
-  var FolderManager = function FolderManager() {
+class FolderManager {
+  htmlElement: HTMLElement
+  folders: Array<string>;
+  ignorePointFolder: boolean;
+  constructor() {
     this.htmlElement = null;
     this.folders = [];
     this.ignorePointFolder = true;
   };
 
-  FolderManager.prototype.clear = function () {
+  clear () {
     var htmlElement = this.htmlElement;
     while (htmlElement.firstChild) {
         htmlElement.removeChild(htmlElement.firstChild);
     }
   };
 
-  FolderManager.prototype.render = function () {
+  render () {
     this.clear();
     var htmlElement = this.htmlElement;
     var folders = this.folders;
@@ -26,7 +27,7 @@ const FolderManager = (()=> {
     }
   };
 
-  FolderManager.prototype.setFolders = function (foldersPath) {
+  setFolders (foldersPath) {
     var folders = [];
     var fname;
     for(var i=0;i<foldersPath.length;i++) {
@@ -35,8 +36,7 @@ const FolderManager = (()=> {
     }
     this.folders = folders;
   };
-  return FolderManager;
-})();
+}
 
 document.folderManager = (()=> {
   var folderManager = new FolderManager();

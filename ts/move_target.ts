@@ -1,40 +1,45 @@
-const MoveTarget = (() => {
-  "use strict";
-  var MoveTarget = function MoveTarget(name, path, parent) {
+class MoveTarget {
+  name: string;
+  path: string;
+  parent: HTMLElement;
+  htmlElement: HTMLLIElement;
+  htmlButtonElement: HTMLButtonElement;
+  event: (MouseEvent)=>void;
+
+  constructor(name, path, parent) {
     this.name = name;
     this.path = path;
     this.parent = parent;
     this.htmlElement = null;
   };
 
-  MoveTarget.prototype.generateHTMLElement = function () {
+  generateHTMLElement () {
     var li = document.createElement('li');
     var e = document.createElement('button');
     e.classList.add('move_target');
     e.innerHTML = this.name;
     e.setAttribute('data-path', this.path);
+    this.htmlButtonElement = e;
     li.appendChild(e);
     e.addEventListener('click', function() {
-      moveTo(this.getAttribute('data-path'));
+      moveFileTo(this.getAttribute('data-path'), true);
     });
     this.htmlElement = li;
   };
 
-  MoveTarget.prototype.getGeneratedHTMLElement = function () {
+  getGeneratedHTMLElement () {
     if(!this.htmlElement) {
       this.generateHTMLElement();
     }
     return this.htmlElement;
   };
 
-  MoveTarget.prototype.render = function () {
+  render () {
     this.parent.appendChild(this.getGeneratedHTMLElement());
     return this.htmlElement;
   };
 
-  MoveTarget.prototype.bindEvent = function () {
+  bindEvent () {
     this.getGeneratedHTMLElement().addEventListener('click', this.event);
   };
-
-  return MoveTarget;
-})();
+}

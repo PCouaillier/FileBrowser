@@ -1,0 +1,15 @@
+{
+   "compilerOptions": {
+       "module": "commonjs",
+       "target": "ES6",
+        "sourceMap": true,
+        "outDir": "js"
+   },
+    "include": [
+        "ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "FileBrowser-win32-x64"
+    ]
+}

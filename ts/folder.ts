@@ -1,7 +1,10 @@
 const DEFAULT_FOLDER_IMAGE = "./folder.png";
 
-const Folder = (() => {
-  var Folder = function Folder(path, name, image) {
+class Folder {
+  path: string;
+  name: string;
+  image: string
+  constructor(path: string, name: string, image?: string) {
     this.path = path;
     if(name) {
       this.name = name;
@@ -11,8 +14,9 @@ const Folder = (() => {
       this.name = fullName.split('.')[0];
     }
     this.image = (image)? image : DEFAULT_FOLDER_IMAGE;
-  };
-  Folder.prototype.render = function() {
+  }
+  
+  render () {
     var e = document.createElement('div');
     e.classList.add('folder');
     e.innerHTML = this.name;
@@ -23,6 +27,5 @@ const Folder = (() => {
       openDir(this.getAttribute('data-path'));
     });
     return e;
-  };
-  return Folder;
-})();
+  }
+}
