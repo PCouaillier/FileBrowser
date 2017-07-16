@@ -13,10 +13,10 @@
   "author": "PCouaillier",
   "license": "",
   "devDependencies": {
-    "devtron": "1.4.0",
-    "electron": "^1.4.1",
-    "electron-packager": "^8.4.0",
-    "electron-rebuild": "1.5.5"
+    "devtron": "1",
+    "electron": "1",
+    "electron-packager": "^8",
+    "electron-rebuild": "1"
   },
   "jshintConfig": {
     "esversion": 6

@@ -6,29 +6,29 @@ function openDir (dir) {
   (document.getElementById('current_path') as HTMLButtonElement).innerHTML = dir;
   (document.getElementById('show_folders') as HTMLButtonElement).disabled=true;
   var body = document.body;
-  if(!document.forceElement) {
-    if(document.mainElement && document.mainElement.htmlElement)
-      body.removeChild(document.mainElement.getHtmlElement());
-    document.mainElement = new FolderElement("./loader.gif", 'loader');
-    document.mainElement.getHtmlElement().classList.add('fullsize');
-    body.appendChild(document.mainElement.getHtmlElement());
+  if(!EnvState.forceElement) {
+    if(EnvState.mainElement && EnvState.mainElement.htmlElement)
+      body.removeChild(EnvState.mainElement.getHtmlElement());
+    EnvState.mainElement = new FolderElement("./loader.gif", 'loader');
+    EnvState.mainElement.getHtmlElement().classList.add('fullsize');
+    EnvState.folderManager.htmlElement.hidden = false;
+    body.appendChild(EnvState.mainElement.getHtmlElement());
   }
-  document.currentDirEntries = null;
-  document.currentDir = dir;
+  EnvState.currentDirEntries = null;
+  EnvState.currentDir = dir;
   fs.readdir(dir, (err, res) => {
-    document.currentDirEntries = res;
+    EnvState.currentDirEntries = res;
     ipc.send('clean-dir-entries', dir, res);
   });
 }
 
 function setCurrentElement() {
   "use strict";
-  var files = document.currentDirEntries;
+  var files = EnvState.currentDirEntries;
   if(!files || files.length ===0) {
-    document.folderManager.render();
+    EnvState.folderManager.render();
     return;
   }
-  const fs = require('fs');
   var page = getCurrentPage();
   var elem = null;
   var file_name;
@@ -48,11 +48,11 @@ function setCurrentElement() {
     i++;
     if(i<files.length) {
       if (cIndex === page+1) {
-        elem = new FolderElement(document.currentDir+'/'+entry, entry);
+        elem = new FolderElement(EnvState.currentDir+'/'+entry, entry);
         if(elem===null) return setCurrentPage(0);
-        if(document.mainElement)
-        document.body.removeChild(document.mainElement.getHtmlElement());
-        document.mainElement = elem;
+        if(EnvState.mainElement)
+        document.body.removeChild(EnvState.mainElement.getHtmlElement());
+        EnvState.mainElement = elem;
         var me = elem;
         elem = elem.getHtmlElement();
         elem.classList.add('fullsize');
@@ -65,25 +65,25 @@ function setCurrentElement() {
           matchS = "";
         }
         applyRatio();
-        if(document.isLeftMenueToggled && !window.setLeftMenueSize()) {
-          window.toFooterMenue();
+        if(EnvState.isLeftMenueToggled && !Menu.setLeftMenueSize()) {
+          Menu.toFooterMenue();
         }
-        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(matchS, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+",name:"+me.name+"}");
+        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(matchS, '')+"#{page:"+page+",url:"+me.path+",dir:"+EnvState.currentDir+",name:"+me.name+"}");
       } else {
-        fs.stat(document.currentDir+'/'+files[i], testFile);
+        fs.stat(EnvState.currentDir+'/'+files[i], testFile);
       }
     }
   }
-  if(!document.currentDirEntriesCleaned) {
-    fs.stat(document.currentDir+'/'+files[0], testFile);
+  if(!EnvState.currentDirEntriesCleaned) {
+    fs.stat(EnvState.currentDir+'/'+files[0], testFile);
   } else {
-    for (i = 0; i < document.currentDirEntries.length; i++) {
+    for (i = 0; i < EnvState.currentDirEntries.length; i++) {
       if(i===page) {
-        entry = document.currentDirEntries[i];
-        elem = new FolderElement(document.currentDir+'/'+entry, entry);
-        if(document.mainElement)
-        document.body.removeChild(document.mainElement.getHtmlElement());
-        document.mainElement = elem;
+        entry = EnvState.currentDirEntries[i];
+        elem = new FolderElement(EnvState.currentDir+'/'+entry, entry);
+        if(EnvState.mainElement)
+        document.body.removeChild(EnvState.mainElement.getHtmlElement());
+        EnvState.mainElement = elem;
         var me = elem;
         elem = elem.getHtmlElement();
         elem.classList.add('fullsize');
@@ -96,14 +96,17 @@ function setCurrentElement() {
           matchS = "";
         }
         applyRatio();
-        if(document.isLeftMenueToggled && !window.setLeftMenueSize()) {
-          window.toFooterMenue();
+        if(EnvState.isLeftMenueToggled && !Menu.setLeftMenueSize()) {
+          Menu.toFooterMenue();
         }
-        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(matchS, '')+"#{page:"+page+",url:"+me.path+",dir:"+document.currentDir+",name:"+me.name+"}");
+        history.replaceState({page: getCurrentPage(), path: elem.path}, "Page: "+page, document.URL.replace(matchS, '')+"#{page:"+page+",url:"+me.path+",dir:"+EnvState.currentDir+",name:"+me.name+"}");
       }
     }
   }
-  if(elem===null) return setCurrentPage(0);
+  if(elem===null)
+    return setCurrentPage(0);
+  else
+    return null;
 }
 
 function getCurrentPage() {
@@ -149,15 +152,15 @@ function showFolders() {
   if(match) {
     if(match[2]!=="null") {
       var mElem = new FolderElement(match[2], match[4]);
-      document.mainElement = mElem;
+      EnvState.mainElement = mElem;
       var elem = mElem.getHtmlElement();
       elem.classList.add('fullsize');
       document.body.appendChild(elem);
       applyRatio();
-      if(document.isLeftMenueToggled && !window.setLeftMenueSize()) {
-        window.toFooterMenue();
+      if(EnvState.isLeftMenueToggled && !Menu.setLeftMenueSize()) {
+        Menu.toFooterMenue();
       }
-      document.forceElement = true;
+      EnvState.forceElement = true;
     }
     var pi = document.getElementById('page_index');
     pi.setAttribute('data-page', match[1]);

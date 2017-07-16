@@ -2,18 +2,19 @@ class FolderManager {
   htmlElement: HTMLElement
   folders: Array<string>;
   ignorePointFolder: boolean;
+
   constructor() {
     this.htmlElement = null;
     this.folders = [];
     this.ignorePointFolder = true;
-  };
+  }
 
   clear () {
     var htmlElement = this.htmlElement;
     while (htmlElement.firstChild) {
         htmlElement.removeChild(htmlElement.firstChild);
     }
-  };
+  }
 
   render () {
     this.clear();
@@ -25,20 +26,20 @@ class FolderManager {
       if (!(this.ignorePointFolder && fname.name[0]==='.'))
         htmlElement.appendChild(fname.render());
     }
-  };
+  }
 
   setFolders (foldersPath) {
     var folders = [];
     var fname;
     for(var i=0;i<foldersPath.length;i++) {
       fname = foldersPath[i];
-      folders.push(new Folder(document.currentDir+"/"+fname, fname));
+      folders.push(new Folder(EnvState.currentDir+"/"+fname, fname));
     }
     this.folders = folders;
-  };
+  }
 }
 
-document.folderManager = (()=> {
+EnvState.folderManager = (()=> {
   var folderManager = new FolderManager();
   folderManager.htmlElement = document.getElementById('folders');
   return folderManager;

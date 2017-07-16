@@ -26,9 +26,6 @@ function createWindow (e,k , targetPath) {
     hash: (targetPath)? "{page:0,url:null,dir:Z:}" : null
   }));
 
-  // Open the DevTools.
-  window.webContents.openDevTools();
-
   // Emitted when the window is closed.
   window.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -50,11 +47,19 @@ ipc.on('create-window' , function (event, targetPath) {
   createWindow(null, null, targetPath);
 });
 
-ipc.on('open-file-dialog', function (event) {
+ipc.on('open-file-dialog', (event) => {
   dialog.showOpenDialog({
-    properties: ['openFile', 'openDirectory']
+    properties: ['openDirectory']
   }, function (files) {
     if (files) event.sender.send('selected-directory', files);
+  });
+});
+
+ipc.on('select_directory', (event) => {
+  dialog.showOpenDialog({
+    properties: ['openDirectory']
+  }, (folder) => {
+    event.sender.send('select_directory_selected', folder);
   });
 });
 

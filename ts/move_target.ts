@@ -2,7 +2,7 @@ class MoveTarget {
   name: string;
   path: string;
   parent: HTMLElement;
-  htmlElement: HTMLLIElement;
+  htmlElement: HTMLElement;
   htmlButtonElement: HTMLButtonElement;
   event: (MouseEvent)=>void;
 
@@ -11,35 +11,40 @@ class MoveTarget {
     this.path = path;
     this.parent = parent;
     this.htmlElement = null;
-  };
+  }
 
-  generateHTMLElement () {
-    var li = document.createElement('li');
+  generateHTMLElement (container: HTMLElement) {
     var e = document.createElement('button');
     e.classList.add('move_target');
     e.innerHTML = this.name;
     e.setAttribute('data-path', this.path);
     this.htmlButtonElement = e;
-    li.appendChild(e);
+    container.appendChild(e);
     e.addEventListener('click', function() {
       moveFileTo(this.getAttribute('data-path'), true);
     });
-    this.htmlElement = li;
-  };
+    e = document.createElement('button');
+    e.innerHTML = 'X';
+    e.addEventListener('click', () => {
+      this.htmlElement.remove();
+    });
+    container.appendChild(e);
+    this.htmlElement = container;
+  }
 
   getGeneratedHTMLElement () {
     if(!this.htmlElement) {
-      this.generateHTMLElement();
+      this.generateHTMLElement(document.createElement('li'));
     }
     return this.htmlElement;
-  };
+  }
 
   render () {
     this.parent.appendChild(this.getGeneratedHTMLElement());
     return this.htmlElement;
-  };
+  }
 
   bindEvent () {
     this.getGeneratedHTMLElement().addEventListener('click', this.event);
-  };
+  }
 }

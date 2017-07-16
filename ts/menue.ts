@@ -1,15 +1,14 @@
 const URL_GET_TOGGLE_MENUE = "toggle_menue";
 
-(() => {
-  "use strict";
-  document.isLeftMenueToggled = false;
-  document.isFootMenue = true;
+namespace Menu {
+  EnvState.isLeftMenueToggled = false;
+  EnvState.isFootMenue = true;
   var actionList = document.getElementById('actionList');
   var toggleMenueWidth = actionList.style.width;
   var footer = document.getElementsByClassName('footer')[0];
 
-  window.setLeftMenueSize = () => {
-    var mainElement = document.mainElement.getHtmlElement();
+  export const setLeftMenueSize = () => {
+    var mainElement = EnvState.mainElement.getHtmlElement();
     var imgW = mainElement.offsetWidth;
     var size;
     if(window.innerWidth - imgW < 500) {
@@ -25,42 +24,42 @@ const URL_GET_TOGGLE_MENUE = "toggle_menue";
     return true;
   };
 
-  window.toLeftMenue = () => {
-    if(!window.setLeftMenueSize()) {
+  export const toLeftMenue = () => {
+    if(!Menu.setLeftMenueSize()) {
       return false;
     }
     actionList.classList.add('leftMenue');
     footer.removeChild(actionList);
     footer.parentNode.appendChild(actionList);
-    document.isFootMenue = false;
+    EnvState.isFootMenue = false;
     return true;
   };
 
-  window.toFooterMenue = () => {
-    document.mainElement.getHtmlElement().style.marginRight = "auto";
+  export const toFooterMenue = () => {
+    EnvState.mainElement.getHtmlElement().style.marginRight = "auto";
     actionList = document.getElementById('actionList');
     actionList.classList.remove('leftMenue');
     actionList.parentNode.removeChild(actionList);
     footer.insertBefore(actionList, footer.children[0]);
     actionList.style.width = toggleMenueWidth;
-    document.isFootMenue = true;
+    EnvState.isFootMenue = true;
   };
 
-  window.toggleMenue = (event) => {
-    if(!document.isLeftMenueToggled) {
-      if(window.toLeftMenue()) {
-        document.isLeftMenueToggled = true;
+  export const toggleMenue = (event) => {
+    if(!EnvState.isLeftMenueToggled) {
+      if(Menu.toLeftMenue()) {
+        EnvState.isLeftMenueToggled = true;
       }
     } else {
-      window.toFooterMenue();
-      document.isLeftMenueToggled = false;
+      Menu.toFooterMenue();
+      EnvState.isLeftMenueToggled = false;
     }
   };
-  document.getElementById('toggle_menue').addEventListener('click', window.toggleMenue);
+  document.getElementById('toggle_menue').addEventListener('click', Menu.toggleMenue);
 
-  document.isLock = false;
+  EnvState.isLock = false;
 
-  window.ConstAllMoveAction = [
+  export const ConstAllMoveAction = [
     document.getElementById('delete_element') as HTMLButtonElement
   ];
-})();
+}

@@ -15,7 +15,6 @@ body {
 .fullsize {
   height: calc(100vh - 3.5rem);
   max-width: 100vw;
-  display: inherit;
   margin-left: auto;
   margin-right: auto;
 }
@@ -46,11 +45,14 @@ pre#main-element.fullsize {
   bottom: 0;
   width: 100%;
   font-size: 1.5rem;
+  height: 5rem;
   position: absolute;
   vertical-align: middle;
 }
 
 #actionList {
+  display: inline-block;
+
   & > li {
     color: blue;
     text-align: underline;

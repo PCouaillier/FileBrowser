@@ -3,7 +3,8 @@ const DEFAULT_FOLDER_IMAGE = "./folder.png";
 class Folder {
   path: string;
   name: string;
-  image: string
+  image: string;
+
   constructor(path: string, name: string, image?: string) {
     this.path = path;
     if(name) {
@@ -15,7 +16,7 @@ class Folder {
     }
     this.image = (image)? image : DEFAULT_FOLDER_IMAGE;
   }
-  
+
   render () {
     var e = document.createElement('div');
     e.classList.add('folder');

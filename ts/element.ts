@@ -1,41 +1,14 @@
-declare function require(string):any;
-
 const fs = require('fs');
 
 interface Array<T> {
   includes(T) : boolean;
 }
 
-interface Window {
-  setLeftMenueSize: ()=>boolean;
-  toLeftMenue: ()=>boolean;
-  toFooterMenue: ()=>void;
-  toggleMenue: (Event)=>void;
-  ConstAllMoveAction: HTMLButtonElement[];
-}
-
 interface HTMLMediaElement {
   webkitAudioDecodedByteCount: number;
 }
 
-interface Document {
-  volume: number;
-  mute: any;
-  isMuted: any;
-  mainElement : FolderElement;
-  isLeftMenueToggled: boolean;
-  isFootMenue: boolean;
-  forceElement: boolean;
-  currentDirEntries: Array<string>;
-  currentDirEntriesCleaned: boolean;
-  currentDir: string;
-  folderManager: FolderManager;
-  lockedPaged: boolean;
-  isLock: boolean;
-  moveTargetManager: MoveTargetManager;
-}
-
-document.volume = 1;
+EnvState.volume = 1;
 
 class FolderElement  {
   name: string;
@@ -44,6 +17,7 @@ class FolderElement  {
   htmlElement: HTMLMediaElement;
   ext: string;
   type: string;
+
   constructor(path: string, name: string) {
     this.name = name;
     this.path = path;
@@ -66,12 +40,12 @@ class FolderElement  {
   static getAudioExtention () {
     const AUDIO_EXTENTION = ['mid', 'midi', 'rm', 'ram', 'wma', 'aac', 'waw', 'ogg', 'mp3'];
     return AUDIO_EXTENTION;
-  };
+  }
 
   static getTextExtention () {
     const AUDIO_EXTENTION = ['md', 'text', 'json', 'git', 'txt', 'rb', 'py', 'gitignore', 'css', 'coffee'];
     return AUDIO_EXTENTION;
-  };
+  }
 
   getType () {
     if(this.type) return this.type;
@@ -105,10 +79,10 @@ class FolderElement  {
           htmlElement.autoplay=true;
           htmlElement.controls=true;
           htmlElement.loop=true;
-          if(document.isMuted) {
+          if(EnvState.isMuted) {
             htmlElement.muted=true;
           } else {
-            htmlElement.volume = document.volume;
+            htmlElement.volume = EnvState.volume;
           }
           break;
         case "audio":
@@ -129,13 +103,13 @@ class FolderElement  {
       this.htmlElement = htmlElement;
     }
     return this.htmlElement;
-  };
+  }
 }
 
-document.isMuted = false;
+EnvState.isMuted = false;
 function mute() {
-  document.isMuted = !document.isMuted;
-  document.mainElement.getHtmlElement().muted=document.isMuted;
+  EnvState.isMuted = !EnvState.isMuted;
+  EnvState.mainElement.getHtmlElement().muted=EnvState.isMuted;
 }
 
 interface HTMLMediaElement {
@@ -145,7 +119,7 @@ interface HTMLMediaElement {
 }
 
 function applyRatio() {
-  var htmlElement = document.mainElement.getHtmlElement();
+  var htmlElement = EnvState.mainElement.getHtmlElement();
   if (htmlElement.complete || htmlElement.readyState) {
     htmlElement.style.height=null;
     htmlElement.style.paddingTop=null;
@@ -160,9 +134,9 @@ function applyRatio() {
       htmlElement.style.paddingBottom = padding;
     }
     if(window.innerWidth - htmlElement.offsetWidth < 250) {
-      window.toFooterMenue();
-    } else if((window.innerWidth - htmlElement.offsetWidth) >= 500 && document.isLeftMenueToggled && document.isFootMenue) {
-      window.toLeftMenue();
+      Menu.toFooterMenue();
+    } else if((window.innerWidth - htmlElement.offsetWidth) >= 500 && EnvState.isLeftMenueToggled && EnvState.isFootMenue) {
+      Menu.toLeftMenue();
     }
   } else {
     setTimeout(applyRatio, 10);

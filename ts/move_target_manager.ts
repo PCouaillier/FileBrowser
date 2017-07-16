@@ -1,40 +1,41 @@
 class MoveTargetManager {
   autoRender: boolean;
   htmlElement: HTMLElement;
-  moveTargets : Array<MoveTarget>
+  moveTargets : Array<MoveTarget>;
+
   constructor(htmlElement: HTMLElement) {
     this.autoRender = false;
     this.htmlElement = htmlElement;
     this.moveTargets = [];
-  };
+  }
 
-  clean () {
+  clean() {
     for(let i=0;i<this.moveTargets.length;i++) {
       if(this.moveTargets[i].htmlElement)
         this.htmlElement.removeChild(this.moveTargets[i].htmlElement);
     }
-  };
+  }
 
-  add (name, path) {
+  add(name, path) {
     this.moveTargets.push(new MoveTarget(name, path, this.htmlElement));
     if (this.autoRender)
       this.render();
-  };
+  }
 
-  render () {
+  render() {
     this.clean();
     for(let i=0;i<this.moveTargets.length;i++) {
       this.moveTargets[i].render();
     }
-  };
+  }
 
-  disable () {
+  disable() {
     this.moveTargets.forEach((e)=> {
       e.htmlButtonElement.disabled = true;
     });
-  };
+  }
 
-  enable () {
+  enable() {
     this.moveTargets.forEach((e)=> {
       e.htmlButtonElement.disabled = false;
     });
